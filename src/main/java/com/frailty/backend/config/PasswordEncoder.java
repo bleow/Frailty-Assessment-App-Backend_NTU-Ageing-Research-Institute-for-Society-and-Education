@@ -1,4 +1,4 @@
-package com.frailty.backend.service;
+package com.frailty.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

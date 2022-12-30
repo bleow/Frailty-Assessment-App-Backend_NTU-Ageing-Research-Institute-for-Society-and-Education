@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Answer {
+public class Result {
     @Id
     @GeneratedValue()
     private UUID id;
@@ -22,27 +22,24 @@ public class Answer {
     private LocalDateTime datetime;
 
     @Column(nullable = false)
-    private String answerText;
+    private QuestionType questionType;
 
     @Column(nullable = false)
-    private Double answerScore;
+    private Double overallScore;
+
+    @Column(nullable = false)
+    private String overallBanding;
 
     @OneToOne
     @JoinColumn(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private AppUser appUser;
 
-    @OneToOne
-    @JoinColumn(nullable = false)
-    private Question question;
-
-
-    // constructor when posting to db
-    public Answer(AppUser appUser, LocalDateTime datetime, Question question, String answerText, Double answerScore) {
-        this.appUser = appUser;
+    public Result(LocalDateTime datetime, QuestionType questionType, Double overallScore, String overallBanding, AppUser appUser) {
         this.datetime = datetime;
-        this.question = question;
-        this.answerText = answerText;
-        this.answerScore = answerScore;
+        this.questionType = questionType;
+        this.overallScore = overallScore;
+        this.overallBanding = overallBanding;
+        this.appUser = appUser;
     }
 }

@@ -23,6 +23,8 @@ Similar to ```@Component``` but for methods instead.
 
 ### @Autowired
 This variable/method etc has a datatype that is also an existing component. Tells Spring Boot to load in the correct dependency when needed.
+
+Note that if a class has only 1 constructor, all of its attributes will be implicitly @Autowired, and this is the recommended best practice. https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.spring-beans-and-dependency-injection
 > Benefits:
 > 
 >> old way: ```private HiService service = new GoodMorningService;```

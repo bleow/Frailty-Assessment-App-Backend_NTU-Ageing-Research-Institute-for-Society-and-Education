@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class SocialQuestionnaireService {
+public class PhysicalQuestionnaireService {
     private Localiser localiser;
     private QuestionRepository questionRepository;
     private AnswerRepository answerRepository;

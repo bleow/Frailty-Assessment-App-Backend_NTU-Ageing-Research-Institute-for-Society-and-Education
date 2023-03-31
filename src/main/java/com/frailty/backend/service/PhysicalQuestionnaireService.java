@@ -39,7 +39,7 @@ public class PhysicalQuestionnaireService {
         for (AnswerRequest request : answerRequest) {
             Question question = questionRepository.findByQuestionNumberAndQuestionType(request.questionNumber(), QuestionType.SOCIAL).orElseThrow(() -> new IllegalStateException(localiser.notFound("Question ID", request.questionNumber().toString())));
             ScoringStrategy strategy = question.getStrategy();
-            log.warn("==TESTING== QUESTION {} {}", question.getQuestionText(), strategy.getCorrectAnswers().toString());
+            log.warn("==TESTING== QUESTION {} {}", question.getQuestionText(), strategy.getScoreMapping().toString());
             Double answerScore = strategy.calculateScore(request.answerText());
             maxScore += strategy.getMaxScore();
             totalScore += answerScore;

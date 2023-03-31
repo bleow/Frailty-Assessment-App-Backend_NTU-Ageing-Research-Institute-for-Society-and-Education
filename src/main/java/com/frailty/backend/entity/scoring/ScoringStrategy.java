@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -21,23 +22,15 @@ public abstract class ScoringStrategy {
     @Column(nullable = false)
     private Double maxScore;
 
-    @Column(nullable = false)
-    private Double valuePerAns;
-
     @ElementCollection
-    private List<String> correctAnswers;
+    private Map<String, Double> scoreMapping;
 
-    public ScoringStrategy(Double maxScore, Double valuePerAns, List<String> correctAnswers) {
+    public ScoringStrategy(Double maxScore, Map<String, Double> scoreMapping) {
         this.maxScore = maxScore;
-        this.valuePerAns = valuePerAns;
-        this.correctAnswers = correctAnswers;
+        this.scoreMapping = scoreMapping;
     }
-
-    public ScoringStrategy(Double maxScore, Double valuePerAns) {
-        this.maxScore = maxScore;
-        this.valuePerAns = valuePerAns;
-    }
-
-    public abstract Double calculateScore(List<String> answer);
-    public abstract boolean validateScore(Double score);
+    public abstract Double calculateScore(String answer);
+    public boolean isValidScore(Double score) {
+        return score <= this.maxScore;
+    };
 }

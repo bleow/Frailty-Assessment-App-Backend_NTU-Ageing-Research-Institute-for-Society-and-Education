@@ -23,6 +23,9 @@ public class Question {
     // https://stackoverflow.com/questions/55166779/how-to-remove-some-fields-of-an-object-in-spring-boot-response-control
 
     @Column(nullable = false)
+    private QuestionnaireType questionnaireType;
+
+    @Column(nullable = false)
     private Integer questionNumber;
 
     @Column(nullable = false)
@@ -33,8 +36,9 @@ public class Question {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ScoringStrategy strategy;
 
-    public Question(QuestionType questionType, Integer questionNumber, String questionText, ScoringStrategy strategy) {
+    public Question(QuestionType questionType, QuestionnaireType questionnaireType, Integer questionNumber, String questionText, ScoringStrategy strategy) {
         this.questionType = questionType;
+        this.questionnaireType = questionnaireType;
         this.questionNumber = questionNumber;
         this.questionText = questionText;
         this.strategy = strategy;

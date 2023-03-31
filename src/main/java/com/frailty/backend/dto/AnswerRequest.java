@@ -9,7 +9,7 @@ public record AnswerRequest(
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime datetime,
         Integer questionNumber,
-        List<String> answerText
+        String answerText
 ) {
         public String answerTextToString() {
                 return String.join(", ", answerText);

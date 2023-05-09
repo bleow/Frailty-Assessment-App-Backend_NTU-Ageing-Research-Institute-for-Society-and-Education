@@ -3,43 +3,69 @@ package com.frailty.backend.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.frailty.backend.dto.AnswerRequest;
+import com.frailty.backend.dto.QuestionDTO;
+import com.frailty.backend.dto.QuestionnaireDTO;
 import com.frailty.backend.entity.*;
 import com.frailty.backend.entity.scoring.ScoringStrategy;
+import com.frailty.backend.mappers.QuestionListToDTOListMapper;
 import com.frailty.backend.output.Localiser;
 import com.frailty.backend.repository.AnswerRepository;
 import com.frailty.backend.repository.QuestionRepository;
 import com.frailty.backend.repository.ResultRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class PhysicalQuestionnaireService {
+    public PhysicalQuestionnaireService(Localiser localiser,
+                                        QuestionRepository questionRepository,
+                                        AnswerRepository answerRepository,
+                                        ResultRepository resultRepository,
+                                        AppUserService appUserService) {
+        this.localiser = localiser;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
+        this.resultRepository = resultRepository;
+        this.appUserService = appUserService;
+        this.mapper = Mappers.getMapper(QuestionListToDTOListMapper.class);
+    }
+
     private Localiser localiser;
     private QuestionRepository questionRepository;
     private AnswerRepository answerRepository;
     private ResultRepository resultRepository;
     private AppUserService appUserService;
+    private QuestionListToDTOListMapper mapper;
 
-    public List<Question> getQuestions() {
-        List<Question> socialQuestions = questionRepository.findByQuestionType(QuestionType.SOCIAL);
-        return socialQuestions;
+    public QuestionnaireDTO getQuestions(String typeStr) {
+        QuestionnaireType type = QuestionnaireType.valueOf(typeStr.toUpperCase());
+        List<Question> physicalQuestions = questionRepository.findByQuestionTypeAndQuestionnaireType(QuestionType.PHYSICAL, type);
+        String questionType = String.valueOf(physicalQuestions.stream().map(Question::getQuestionType).findFirst().get());
+        String questionnaireType = String.valueOf(physicalQuestions.stream().map(Question::getQuestionnaireType).findFirst().get());
+        List<QuestionDTO> questions = mapper.mapQuestionListToDTOList(physicalQuestions);
+        QuestionnaireDTO res = new QuestionnaireDTO(questionType, questionnaireType, questions);
+        return res;
     }
 
-    public Double postAnswers(String username, List<AnswerRequest> answerRequest) {
-        log.warn("==TESTING== USERNAME {}", username);
+    public String postAnswers(String typeStr, String username, List<AnswerRequest> answerRequest) {
+        QuestionnaireType type = QuestionnaireType.valueOf(typeStr.toUpperCase());
+        log.debug("==TESTING== USERNAME {}", username);
         AppUser appUser = appUserService.getValidUser(username);
         ArrayList<Answer> answers = new ArrayList<>();
         Double totalScore = 0.0;
         Double maxScore = 0.0;
         for (AnswerRequest request : answerRequest) {
-            Question question = questionRepository.findByQuestionNumberAndQuestionType(request.questionNumber(), QuestionType.SOCIAL).orElseThrow(() -> new IllegalStateException(localiser.notFound("Question ID", request.questionNumber().toString())));
+            Question question = questionRepository.findByQuestionNumberAndQuestionTypeAndQuestionnaireType(request.questionNumber(), QuestionType.PHYSICAL, type).orElseThrow(() -> new IllegalStateException(localiser.notFound("Question ID", request.questionNumber().toString())));
             ScoringStrategy strategy = question.getStrategy();
-            log.warn("==TESTING== QUESTION {} {}", question.getQuestionText(), strategy.getScoreMapping().toString());
+            log.info("Question is {} {}", question.getQuestionText(), strategy.getScoreMapping().toString());
             Double answerScore = strategy.calculateScore(request.answerText());
             maxScore += strategy.getMaxScore();
             totalScore += answerScore;
@@ -48,23 +74,21 @@ public class PhysicalQuestionnaireService {
         }
         answerRepository.saveAll(answers);
 
-        Double MAX_SCORE = questionRepository.findByQuestionType(QuestionType.SOCIAL).stream().map(Question::getStrategy).map(ScoringStrategy::getMaxScore).reduce(0.0, Double::sum);
-        if (Double.compare(maxScore, MAX_SCORE) > 0) {
-            throw new IllegalStateException(localiser.fail(String.format("Score cannot be greater than %f. Current score is %f", MAX_SCORE, maxScore)));
-        } else if (Double.compare(maxScore, MAX_SCORE) == 0) {
-            LocalDateTime resultsDateTime = answers.stream().map(Answer::getDatetime).min(LocalDateTime::compareTo).get();
-            String overallBanding;
-            if (totalScore <= 1) {
-                overallBanding = "Non-frail";
-            } else if (totalScore <= 3) {
-                overallBanding = "Pre-frail";
-            } else {
-                overallBanding = "Frail";
-            }
-            resultRepository.save(new Result(resultsDateTime, QuestionType.SOCIAL, totalScore, overallBanding, appUser));
+        LocalDateTime resultsDateTime = answers.stream().map(Answer::getDatetime).min(LocalDateTime::compareTo).get();
+        String overallBanding;
+        if (totalScore <= 1) {
+            overallBanding = "Non-frail";
+        } else if (totalScore <= 3) {
+            overallBanding = "Pre-frail";
+        } else {
+            overallBanding = "Frail";
         }
+        Result res = new Result(resultsDateTime, QuestionType.SOCIAL, type, totalScore, overallBanding, appUser);
+        log.info("New quiz of type {}, {} was finished at {} by {}. Results: {}, raw score: {}",
+                res.getQuestionType(), res.getQuestionnaireType(), res.getDatetime(), res.getAppUser(), res.getOverallBanding(), res.getOverallScore());
+        resultRepository.save(res);
 
-        return totalScore;
+        return res.getOverallBanding();
     }
 
     public List<Answer> getAnswers(String username, String email) {

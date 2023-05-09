@@ -15,12 +15,12 @@ import javax.persistence.*;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @Column(nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    https://stackoverflow.com/questions/55166779/how-to-remove-some-fields-of-an-object-in-spring-boot-response-control
     private QuestionType questionType;
-    // https://stackoverflow.com/questions/55166779/how-to-remove-some-fields-of-an-object-in-spring-boot-response-control
 
     @Column(nullable = false)
     private QuestionnaireType questionnaireType;
@@ -28,7 +28,7 @@ public class Question {
     @Column(nullable = false)
     private Integer questionNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2048)
     private String questionText;
 
     @OneToOne

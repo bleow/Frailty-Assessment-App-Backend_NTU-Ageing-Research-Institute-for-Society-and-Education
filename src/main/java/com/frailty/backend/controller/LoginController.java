@@ -17,9 +17,9 @@ public class LoginController {
 
     @PostMapping()
     public String login(Authentication authentication) {
-        log.debug("Token requested for user: {}", authentication.getName());
+        log.info("Token requested for user: {}", authentication.getName());
         String token = loginService.generateToken(authentication);
-        log.debug("Token is {}", token);
+        log.info("Token is {}", token);
         return token;
     }
 }

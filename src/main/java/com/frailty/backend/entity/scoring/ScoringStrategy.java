@@ -1,5 +1,6 @@
 package com.frailty.backend.entity.scoring;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,9 @@ import java.util.Map;
 public abstract class ScoringStrategy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    // https://stackoverflow.com/questions/55166779/how-to-remove-some-fields-of-an-object-in-spring-boot-response-control
+
     private Integer id;
 
     @Column(nullable = false)

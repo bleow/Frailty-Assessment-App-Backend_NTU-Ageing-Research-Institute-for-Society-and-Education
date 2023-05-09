@@ -13,7 +13,8 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class ConfirmationTokenService {
-    public static final int MAX_REGISTRATION_TOKEN_VALID_MINUTES = 30;
+    // 7 days
+    public static final int MAX_REGISTRATION_TOKEN_VALID_MINUTES = 10080;
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
     public Optional<ConfirmationToken> getConfirmationToken(String token) {

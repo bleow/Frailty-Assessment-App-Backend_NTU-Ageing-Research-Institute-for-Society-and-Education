@@ -25,6 +25,9 @@ public class Result {
     private QuestionType questionType;
 
     @Column(nullable = false)
+    private QuestionnaireType questionnaireType;
+
+    @Column(nullable = false)
     private Double overallScore;
 
     @Column(nullable = false)
@@ -35,9 +38,10 @@ public class Result {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private AppUser appUser;
 
-    public Result(LocalDateTime datetime, QuestionType questionType, Double overallScore, String overallBanding, AppUser appUser) {
+    public Result(LocalDateTime datetime, QuestionType questionType, QuestionnaireType questionnaireType, Double overallScore, String overallBanding, AppUser appUser) {
         this.datetime = datetime;
         this.questionType = questionType;
+        this.questionnaireType = questionnaireType;
         this.overallScore = overallScore;
         this.overallBanding = overallBanding;
         this.appUser = appUser;

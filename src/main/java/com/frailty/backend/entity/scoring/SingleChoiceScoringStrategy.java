@@ -23,6 +23,7 @@ public class SingleChoiceScoringStrategy extends ScoringStrategy implements ISco
         return Collections.max(scoreMapping.values());
     }
 
+    // assumes text passed in exactly matches one of the options
     @Override
     public Double calculateScore(String answer) {
         return getScoreMapping().get(answer);

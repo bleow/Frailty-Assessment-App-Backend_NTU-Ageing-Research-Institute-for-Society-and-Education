@@ -14,13 +14,10 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @DiscriminatorValue("Single_Choice")
-public class SingleChoiceScoringStrategy extends ScoringStrategy implements IScoringStrategy {
+public class SingleChoiceScoringStrategy extends ScoringStrategy {
 
     public SingleChoiceScoringStrategy(Map<String, Double> scoreMapping) {
-        super(getMaxScore(scoreMapping), scoreMapping);
-    }
-    private static Double getMaxScore(Map<String, Double> scoreMapping) {
-        return Collections.max(scoreMapping.values());
+        super(scoreMapping);
     }
 
     // assumes text passed in exactly matches one of the options

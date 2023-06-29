@@ -75,14 +75,19 @@ public class PhysicalQuestionnaireService {
         answerRepository.saveAll(answers);
 
         LocalDateTime resultsDateTime = answers.stream().map(Answer::getDatetime).min(LocalDateTime::compareTo).get();
-        String overallBanding;
-        if (totalScore <= 1) {
-            overallBanding = "Non-frail";
-        } else if (totalScore <= 3) {
-            overallBanding = "Pre-frail";
-        } else {
-            overallBanding = "Frail";
+        String overallBanding = "ERROR: question type not recognised";
+        if (type == QuestionnaireType.PHENOTYPE) {
+            if (totalScore <= 1) {
+                overallBanding = "Non-frail";
+            } else if (totalScore <= 3) {
+                overallBanding = "Pre-frail";
+            } else {
+                overallBanding = "Frail";
+            }
+        } else if (type == QuestionnaireType.IPAQ) {
+            overallBanding = "Non-frail (TODO: the scoring system has not been implemented yet)";
         }
+
         Result res = new Result(resultsDateTime, QuestionType.SOCIAL, type, totalScore, overallBanding, appUser);
         log.info("New quiz of type {}, {} was finished at {} by {}. Results: {}, raw score: {}",
                 res.getQuestionType(), res.getQuestionnaireType(), res.getDatetime(), res.getAppUser(), res.getOverallBanding(), res.getOverallScore());

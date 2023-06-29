@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "scoring_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class ScoringStrategy {
+public abstract class ScoringStrategy implements IScoringStrategy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -29,12 +30,12 @@ public abstract class ScoringStrategy {
     @ElementCollection
     private Map<String, Double> scoreMapping;
 
-    public ScoringStrategy(Double maxScore, Map<String, Double> scoreMapping) {
-        this.maxScore = maxScore;
+    public ScoringStrategy(Map<String, Double> scoreMapping) {
+        this.maxScore = this.calcMaxScore(scoreMapping);
         this.scoreMapping = scoreMapping;
     }
-    public abstract Double calculateScore(String answer);
-    public boolean isValidScore(Double score) {
-        return score <= this.maxScore;
-    };
+
+    public Double calcMaxScore(Map<String, Double> scoreMapping) {
+        return Collections.max(scoreMapping.values());
+    }
 }

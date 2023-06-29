@@ -130,6 +130,51 @@ public class QuestionSeeder implements CommandLineRunner {
     }
 
     private void loadPhysicalSARC() {
-    }
+        int question_number = 0;
 
+        Map<String, Double> scoreMapping = new HashMap<>();
+        scoreMapping.put("A. None", 0.0);
+        scoreMapping.put("B. Sometimes", 1.0);
+        scoreMapping.put("C. Great difficulty or unable to lift", 2.0);
+        ScoringStrategy strategy = new SingleChoiceScoringStrategy(scoreMapping);
+        scoringStrategyRepository.save(strategy);
+        questions.add(new Question(QuestionType.PHYSICAL, QuestionnaireType.SARC, ++question_number,
+                "Did you experience any difficulty in lifting or carrying 10 pounds (4.5kg)?", strategy));
+
+        scoreMapping.clear();
+        scoreMapping.put("A. None", 0.0);
+        scoreMapping.put("B. Sometimes", 1.0);
+        scoreMapping.put("C. Great difficulty, require help, or unable to walk", 2.0);
+        strategy = new SingleChoiceScoringStrategy(scoreMapping);
+        scoringStrategyRepository.save(strategy);
+        questions.add(new Question(QuestionType.PHYSICAL, QuestionnaireType.SARC, ++question_number,
+                "Did you experience any difficulty in walking across a room?", strategy));
+
+        scoreMapping.clear();
+        scoreMapping.put("A. None", 0.0);
+        scoreMapping.put("B. Sometimes", 1.0);
+        scoreMapping.put("C. Great difficulty, or unable to transfer without help", 2.0);
+        strategy = new SingleChoiceScoringStrategy(scoreMapping);
+        scoringStrategyRepository.save(strategy);
+        questions.add(new Question(QuestionType.PHYSICAL, QuestionnaireType.SARC, ++question_number,
+                "Did you experience any difficulty in transferring from a chair or bed?", strategy));
+
+        scoreMapping.clear();
+        scoreMapping.put("A. None", 0.0);
+        scoreMapping.put("B. Sometimes", 1.0);
+        scoreMapping.put("C. Great difficulty, or unable to climb", 2.0);
+        strategy = new SingleChoiceScoringStrategy(scoreMapping);
+        scoringStrategyRepository.save(strategy);
+        questions.add(new Question(QuestionType.PHYSICAL, QuestionnaireType.SARC, ++question_number,
+                "Did you experience any difficulty in climbing a flight of 10 steps?", strategy));
+
+        scoreMapping.clear();
+        scoreMapping.put("A. None", 0.0);
+        scoreMapping.put("B. 1-3 falls", 1.0);
+        scoreMapping.put("C. 4 or more falls", 2.0);
+        strategy = new SingleChoiceScoringStrategy(scoreMapping);
+        scoringStrategyRepository.save(strategy);
+        questions.add(new Question(QuestionType.PHYSICAL, QuestionnaireType.SARC, ++question_number,
+                "Did you experience any falls in the past year?", strategy));
+    }
 }

@@ -85,7 +85,13 @@ public class PhysicalQuestionnaireService {
                 overallBanding = "Frail";
             }
         } else if (type == QuestionnaireType.IPAQ) {
-            overallBanding = "Non-frail (TODO: the scoring system has not been implemented yet)";
+            overallBanding = "TODO: As of 20230323, the scoring system has not been decided yet. Check with Jie Xin for updates.";
+        } else if (type == QuestionnaireType.SARC) {
+            if (totalScore <= 4) {
+                overallBanding = "Non-frail";
+            } else {
+                overallBanding = "Frail";
+            }
         }
 
         Result res = new Result(resultsDateTime, QuestionType.SOCIAL, type, totalScore, overallBanding, appUser);
@@ -97,6 +103,7 @@ public class PhysicalQuestionnaireService {
     }
 
     public List<Answer> getAnswers(String username, String email) {
+        // TODO implement access control, currently anyone with an account can access any patient's results
         AppUser clinician = appUserService.getValidUser(username);
         AppUser patient = appUserService.getValidUser(email);
         return answerRepository.findByAppUser(patient);

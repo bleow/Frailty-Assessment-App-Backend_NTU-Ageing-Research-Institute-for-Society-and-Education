@@ -1,0 +1,7 @@
+It has been 10 months since the start of my URECA journey, and it has been an incredibly fruitful experience for me. 
+
+Working with the Ageing Research Institute for Society and Education, I assisted the team in the development of a prototype to self-assess for multidimensional frailty, and it has been a truly invigorating experience to be able to apply my software development skills in the context of a real-life research project. The business requirements changed in tandem with progress in our research, and it is a novel experience to witness how changing business requirements can impact the way we develop, architect, and maintain software solutions. 
+
+I learnt a lot in my 10 months on how one can develop a backend application, and the experience has sharpened my Java and Spring (a Java framework for backend development) skills and knowledge immensely. I am confident in applying my newfound knowledge in future internships and even after graduation as I prepare for a career in software engineering in the real world.
+
+Most importantly, it is heartening to know that my craft will contribute toward the betterment of society and to the research efforts of ARISE, and I am thankful for all the learning and development I have garnered throughout this URECA journey.
